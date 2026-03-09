@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ethan Geronimo — Finance & Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0b0f0e;
+    --surface: #111614;
+    --card: #161c1a;
+    --border: #1f2825;
+    --green: #3ddc84;
+    --green-dim: #2ab86a;
+    --green-glow: #3ddc8422;
+    --cream: #e8e4d9;
+    --muted: #6b7e76;
+    --text: #d4d9d6;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── CURSOR ── */
+  .cursor-dot {
+    position: fixed; width: 8px; height: 8px;
+    background: var(--green); border-radius: 50%;
+    pointer-events: none; z-index: 9999;
+    transform: translate(-50%, -50%);
+    transition: width .2s, height .2s, opacity .2s;
+  }
+  .cursor-ring {
+    position: fixed; width: 36px; height: 36px;
+    border: 1px solid var(--green); border-radius: 50%;
+    pointer-events: none; z-index: 9998;
+    transform: translate(-50%, -50%);
+    transition: all .12s ease;
+    opacity: .5;
+  }
+  body:has(a:hover) .cursor-dot,
+  body:has(button:hover) .cursor-dot { width: 16px; height: 16px; }
+  body:has(a:hover) .cursor-ring,
+  body:has(button:hover) .cursor-ring { width: 54px; height: 54px; opacity: .25; }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+    opacity: .028;
+    pointer-events: none;
+    z-index: 9000;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 48px;
+    background: linear-gradient(to bottom, #0b0f0eee, transparent);
+    backdrop-filter: blur(0px);
+    transition: backdrop-filter .3s, background .3s;
+  }
+  nav.scrolled {
+    backdrop-filter: blur(20px);
+    background: #0b0f0ef0;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 22px;
+    letter-spacing: .12em;
+    color: var(--cream);
+  }
+  .nav-logo span { color: var(--green); }
+  .nav-links {
+    display: flex; gap: 36px; list-style: none;
+  }
+  .nav-links a {
+    text-decoration: none; font-size: 13px;
+    color: var(--muted); letter-spacing: .06em;
+    text-transform: uppercase; transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--green); }
+  .nav-cta {
+    background: none; border: 1px solid var(--green);
+    color: var(--green); font-family: 'DM Sans', sans-serif;
+    font-size: 12px; letter-spacing: .1em; text-transform: uppercase;
+    padding: 9px 22px; border-radius: 2px; cursor: pointer;
+    transition: background .2s, color .2s;
+    text-decoration: none;
+  }
+  .nav-cta:hover { background: var(--green); color: var(--bg); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 120px 48px 80px;
+    gap: 60px;
+    position: relative;
+    overflow: hidden;
+  }
+  #hero::after {
+    content: '';
+    position: absolute;
+    top: -200px; right: -300px;
+    width: 700px; height: 700px;
+    background: radial-gradient(circle, var(--green-glow) 0%, transparent 65%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    display: flex; align-items: center; gap: 12px;
+    font-size: 12px; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--green); margin-bottom: 24px;
+  }
+  .hero-eyebrow::before {
+    content: ''; display: block;
+    width: 32px; height: 1px; background: var(--green);
+  }
+  .hero-name {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(72px, 8vw, 120px);
+    line-height: .92;
+    letter-spacing: .02em;
+    color: var(--cream);
+    margin-bottom: 8px;
+  }
+  .hero-name .last { color: var(--green); }
+  .hero-title {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: clamp(20px, 2.2vw, 30px);
+    color: var(--muted);
+    margin-bottom: 32px;
+  }
+  .hero-bio {
+    font-size: 15px; line-height: 1.8;
+    color: var(--muted); max-width: 440px;
+    margin-bottom: 44px;
+  }
+  .hero-ctas {
+    display: flex; gap: 16px; flex-wrap: wrap;
+  }
+  .btn-primary {
+    background: var(--green); color: var(--bg);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px; font-weight: 500;
+    letter-spacing: .08em; text-transform: uppercase;
+    padding: 14px 32px; border-radius: 2px;
+    text-decoration: none; transition: opacity .2s;
+    border: none; cursor: pointer;
+  }
+  .btn-primary:hover { opacity: .85; }
+  .btn-outline {
+    background: none; border: 1px solid var(--border);
+    color: var(--text); font-family: 'DM Sans', sans-serif;
+    font-size: 13px; letter-spacing: .08em; text-transform: uppercase;
+    padding: 14px 32px; border-radius: 2px;
+    text-decoration: none; transition: border-color .2s, color .2s; cursor: pointer;
+  }
+  .btn-outline:hover { border-color: var(--green); color: var(--green); }
+
+  /* Hero right — stat card stack */
+  .hero-right {
+    display: flex; flex-direction: column; gap: 16px;
+    position: relative; z-index: 1;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px 28px;
+    display: flex; align-items: center; gap: 20px;
+    transition: border-color .3s, transform .3s;
+  }
+  .stat-card:hover { border-color: var(--green); transform: translateX(6px); }
+  .stat-icon {
+    font-size: 28px; width: 52px; height: 52px;
+    background: var(--green-glow); border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .stat-info-label { font-size: 11px; text-transform: uppercase; letter-spacing: .15em; color: var(--muted); }
+  .stat-info-val { font-family: 'Bebas Neue', sans-serif; font-size: 26px; color: var(--cream); letter-spacing: .04em; margin-top: 2px; }
+
+  /* ── SECTION SHARED ── */
+  section { padding: 100px 48px; }
+  .section-label {
+    font-size: 11px; letter-spacing: .3em; text-transform: uppercase;
+    color: var(--green); margin-bottom: 16px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); max-width: 80px; }
+  .section-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(42px, 5vw, 68px);
+    letter-spacing: .04em;
+    color: var(--cream);
+    line-height: 1;
+    margin-bottom: 60px;
+  }
+
+  /* ── EXPERIENCE ── */
+  #experience { background: var(--surface); }
+  .exp-grid { display: flex; flex-direction: column; gap: 2px; }
+  .exp-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 0;
+    overflow: hidden;
+    transition: border-color .3s;
+  }
+  .exp-item:hover { border-color: var(--green); }
+  .exp-header {
+    display: grid; grid-template-columns: auto 1fr auto;
+    gap: 20px; align-items: center;
+    padding: 28px 32px;
+    cursor: pointer;
+  }
+  .exp-num {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px; color: var(--green); letter-spacing: .1em;
+  }
+  .exp-meta { display: flex; flex-direction: column; gap: 4px; }
+  .exp-role { font-size: 17px; font-weight: 500; color: var(--cream); }
+  .exp-company { font-size: 13px; color: var(--muted); }
+  .exp-dates {
+    font-size: 12px; color: var(--muted);
+    background: var(--bg); border: 1px solid var(--border);
+    padding: 6px 14px; border-radius: 100px;
+    white-space: nowrap;
+  }
+  .exp-body {
+    max-height: 0; overflow: hidden;
+    transition: max-height .4s cubic-bezier(.4,0,.2,1), padding .3s;
+    padding: 0 32px;
+    border-top: 0px solid var(--border);
+  }
+  .exp-item.open .exp-body {
+    max-height: 400px;
+    padding: 0 32px 28px;
+    border-top: 1px solid var(--border);
+  }
+  .exp-bullets { list-style: none; display: flex; flex-direction: column; gap: 10px; padding-top: 20px; }
+  .exp-bullets li {
+    font-size: 14px; line-height: 1.7; color: var(--muted);
+    padding-left: 18px; position: relative;
+  }
+  .exp-bullets li::before {
+    content: '→'; position: absolute; left: 0;
+    color: var(--green); font-size: 12px;
+  }
+  .exp-toggle {
+    font-size: 20px; color: var(--muted);
+    transition: transform .3s, color .3s;
+  }
+  .exp-item.open .exp-toggle { transform: rotate(45deg); color: var(--green); }
+
+  /* ── EDUCATION ── */
+  #education { background: var(--bg); }
+  .edu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .edu-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 36px 32px;
+    position: relative; overflow: hidden;
+    transition: border-color .3s, transform .3s;
+  }
+  .edu-card::before {
+    content: '';
+    position: absolute; bottom: -40px; right: -40px;
+    width: 120px; height: 120px;
+    background: var(--green-glow);
+    border-radius: 50%;
+    transition: transform .4s;
+  }
+  .edu-card:hover { border-color: var(--green); transform: translateY(-4px); }
+  .edu-card:hover::before { transform: scale(2.5); }
+  .edu-school { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: var(--cream); letter-spacing: .04em; margin-bottom: 6px; }
+  .edu-degree { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 15px; color: var(--green); margin-bottom: 12px; }
+  .edu-dates { font-size: 12px; color: var(--muted); letter-spacing: .06em; margin-bottom: 16px; }
+  .edu-note { font-size: 13px; color: var(--muted); line-height: 1.7; }
+
+  /* ── SKILLS ── */
+  #skills { background: var(--surface); }
+  .skills-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+  .skill-group-title {
+    font-size: 11px; text-transform: uppercase; letter-spacing: .2em;
+    color: var(--green); margin-bottom: 20px;
+  }
+  .skill-tags { display: flex; flex-wrap: wrap; gap: 10px; }
+  .skill-tag {
+    background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); font-size: 13px;
+    padding: 8px 18px; border-radius: 100px;
+    transition: border-color .2s, color .2s, background .2s;
+  }
+  .skill-tag:hover { border-color: var(--green); color: var(--green); background: var(--green-glow); }
+
+  /* ── CONTACT ── */
+  #contact {
+    background: var(--bg);
+    text-align: center;
+    position: relative; overflow: hidden;
+  }
+  #contact::before {
+    content: '';
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px; height: 400px;
+    background: radial-gradient(ellipse, var(--green-glow) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .contact-big {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(48px, 8vw, 100px);
+    color: var(--cream); letter-spacing: .04em;
+    line-height: 1; margin-bottom: 20px;
+  }
+  .contact-big span { color: var(--green); }
+  .contact-sub { font-size: 16px; color: var(--muted); margin-bottom: 48px; max-width: 480px; margin-left: auto; margin-right: auto; }
+  .contact-links {
+    display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;
+    margin-bottom: 80px;
+  }
+  .contact-link {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--card); border: 1px solid var(--border);
+    color: var(--text); text-decoration: none;
+    padding: 14px 28px; border-radius: 8px; font-size: 14px;
+    transition: border-color .2s, color .2s;
+  }
+  .contact-link:hover { border-color: var(--green); color: var(--green); }
+  .contact-link svg { width: 18px; height: 18px; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 24px 48px;
+    display: flex; justify-content: space-between; align-items: center;
+    font-size: 12px; color: var(--muted);
+  }
+
+  /* ── SCROLL ANIMATIONS ── */
+  .reveal {
+    opacity: 0; transform: translateY(32px);
+    transition: opacity .7s ease, transform .7s ease;
+  }
+  .reveal.visible { opacity: 1; transform: translateY(0); }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 900px) {
+    nav { padding: 16px 24px; }
+    nav .nav-links { display: none; }
+    #hero { grid-template-columns: 1fr; padding: 100px 24px 60px; }
+    .hero-right { display: none; }
+    section { padding: 70px 24px; }
+    .edu-grid { grid-template-columns: 1fr; }
+    .skills-layout { grid-template-columns: 1fr; }
+    footer { flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor-dot" id="cd"></div>
+<div class="cursor-ring" id="cr"></div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-logo">EG<span>.</span></div>
+  <ul class="nav-links">
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#education">Education</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="mailto:eg975@scarletmail.rutgers.edu" class="nav-cta">Hire Me</a>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">Available for opportunities</div>
+    <h1 class="hero-name">
+      ETHAN<br><span class="last">GERONIMO</span>
+    </h1>
+    <div class="hero-title">Finance & Management Student</div>
+    <p class="hero-bio">
+      Rutgers Business School student combining hands-on operational experience with a strong foundation in finance. Bilingual, results-driven, and ready to bring energy to any team.
+    </p>
+    <div class="hero-ctas">
+      <a href="#contact" class="btn-primary">Get In Touch</a>
+      <a href="https://www.linkedin.com/in/ethan-geronimo-3690a436a" target="_blank" class="btn-outline">LinkedIn ↗</a>
+    </div>
+  </div>
+  <div class="hero-right">
+    <div class="stat-card reveal">
+      <div class="stat-icon">🎓</div>
+      <div class="stat-info">
+        <div class="stat-info-label">Currently Studying</div>
+        <div class="stat-info-val">Rutgers Business</div>
+      </div>
+    </div>
+    <div class="stat-card reveal" style="transition-delay:.1s">
+      <div class="stat-icon">📍</div>
+      <div class="stat-info">
+        <div class="stat-info-label">Based In</div>
+        <div class="stat-info-val">Newark, NJ</div>
+      </div>
+    </div>
+    <div class="stat-card reveal" style="transition-delay:.2s">
+      <div class="stat-icon">🌐</div>
+      <div class="stat-info">
+        <div class="stat-info-label">Languages</div>
+        <div class="stat-info-val">English + Portuguese</div>
+      </div>
+    </div>
+    <div class="stat-card reveal" style="transition-delay:.3s">
+      <div class="stat-icon">⚡</div>
+      <div class="stat-info">
+        <div class="stat-info-label">GPA</div>
+        <div class="stat-info-val">3.5 — Essex CC</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-label reveal">Work History</div>
+  <h2 class="section-title reveal">Experience</h2>
+  <div class="exp-grid">
+
+    <div class="exp-item reveal" onclick="toggleExp(this)">
+      <div class="exp-header">
+        <span class="exp-num">01</span>
+        <div class="exp-meta">
+          <div class="exp-role">Construction Laborer</div>
+          <div class="exp-company">M&A Painting and Carpentry — West Orange, NJ</div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <span class="exp-dates">Aug 2025 – Jan 2026</span>
+          <span class="exp-toggle">+</span>
+        </div>
+      </div>
+      <div class="exp-body">
+        <ul class="exp-bullets">
+          <li>Delivered comprehensive handyman and construction services within a 3-person team, executing full demolitions and wall reconstruction with 100% project completion and zero property damage.</li>
+          <li>Assessed structural risks before each demolition phase, maintaining clean and safe job sites to ensure consistent homeowner satisfaction.</li>
+          <li>Coordinated closely with team members to manage timelines and quality across simultaneous tasks in residential environments.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="exp-item reveal" style="transition-delay:.1s" onclick="toggleExp(this)">
+      <div class="exp-header">
+        <span class="exp-num">02</span>
+        <div class="exp-meta">
+          <div class="exp-role">Freight Handler</div>
+          <div class="exp-company">Humano — Bridgewater, NJ</div>
+        </div>
+        <div style="display:flex;gap:12px;align-items:center;">
+          <span class="exp-dates">Jun 2025 – Aug 2025</span>
+          <span class="exp-toggle">+</span>
+        </div>
+      </div>
+      <div class="exp-body">
+        <ul class="exp-bullets">
+          <li>Managed high-volume warehouse operations, processing 3 daily cargo shipments and staging 200+ furniture pieces per shift while meeting 100% of daily workload targets.</li>
+          <li>Optimized floor space organization and retrieval workflows, improving visual standards and operational efficiency across the warehouse floor.</li>
+          <li>Collaborated with partners to adapt strategies for fluctuating shipment volumes, demonstrating strong logistics and analytical skills.</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div class="section-label reveal">Academic Background</div>
+  <h2 class="section-title reveal">Education</h2>
+  <div class="edu-grid">
+    <div class="edu-card reveal">
+      <div class="edu-school">Rutgers Business School</div>
+      <div class="edu-degree">B.S. Finance & Management</div>
+      <div class="edu-dates">2025 – Expected Jun 2029 · Newark, NJ</div>
+      <div class="edu-note">Currently enrolled at Rutgers, The State University of New Jersey, pursuing a degree in Finance and Management.</div>
+    </div>
+    <div class="edu-card reveal" style="transition-delay:.15s">
+      <div class="edu-school">Essex County College</div>
+      <div class="edu-degree">Associate Degree</div>
+      <div class="edu-dates">Graduated Dec 2025 · Newark, NJ</div>
+      <div class="edu-note">Graduated with a 3.5 GPA. Attended Eastside High School (2 years) and Saint Benedict's Prep (2 years) prior to college.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-label reveal">What I Bring</div>
+  <h2 class="section-title reveal">Skills</h2>
+  <div class="skills-layout">
+    <div class="reveal">
+      <div class="skill-group-title">Soft Skills</div>
+      <div class="skill-tags">
+        <span class="skill-tag">Communication</span>
+        <span class="skill-tag">Teamwork</span>
+        <span class="skill-tag">Leadership</span>
+        <span class="skill-tag">Problem Solving</span>
+        <span class="skill-tag">Adaptability</span>
+        <span class="skill-tag">Work Ethic</span>
+        <span class="skill-tag">Reliability</span>
+      </div>
+    </div>
+    <div class="reveal" style="transition-delay:.1s">
+      <div class="skill-group-title">Technical & Domain</div>
+      <div class="skill-tags">
+        <span class="skill-tag">Logistics</span>
+        <span class="skill-tag">Warehouse Operations</span>
+        <span class="skill-tag">Construction Safety</span>
+        <span class="skill-tag">Finance (In Progress)</span>
+        <span class="skill-tag">Inventory Management</span>
+        <span class="skill-tag">Floor Organization</span>
+      </div>
+    </div>
+    <div class="reveal" style="transition-delay:.2s">
+      <div class="skill-group-title">Languages</div>
+      <div class="skill-tags">
+        <span class="skill-tag">English (Fluent)</span>
+        <span class="skill-tag">Portuguese (Fluent)</span>
+        <span class="skill-tag">Seal of Biliteracy</span>
+      </div>
+    </div>
+    <div class="reveal" style="transition-delay:.3s">
+      <div class="skill-group-title">Activities</div>
+      <div class="skill-tags">
+        <span class="skill-tag">Campus Soccer</span>
+        <span class="skill-tag">Team Sports</span>
+        <span class="skill-tag">Discipline & Commitment</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-big reveal">LET'S <span>CONNECT</span></div>
+  <p class="contact-sub reveal">I'm open to internships, part-time roles, and new opportunities. Don't hesitate to reach out.</p>
+  <div class="contact-links reveal">
+    <a href="mailto:eg975@scarletmail.rutgers.edu" class="contact-link">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25H4.5a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5H4.5a2.25 2.25 0 00-2.25 2.25m19.5 0l-9.75 7.5-9.75-7.5"/></svg>
+      eg975@scarletmail.rutgers.edu
+    </a>
+    <a href="https://www.linkedin.com/in/ethan-geronimo-3690a436a" target="_blank" class="contact-link">
+      <svg fill="currentColor" viewBox="0 0 24 24"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      LinkedIn
+    </a>
+    <a href="tel:9734899422" class="contact-link">
+      <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 6.75c0 8.284 6.716 15 15 15h2.25a2.25 2.25 0 002.25-2.25v-1.372c0-.516-.351-.966-.852-1.091l-4.423-1.106c-.44-.11-.902.055-1.173.417l-.97 1.293c-.282.376-.769.542-1.21.38a12.035 12.035 0 01-7.143-7.143c-.162-.441.004-.928.38-1.21l1.293-.97c.363-.271.527-.734.417-1.173L6.963 3.102a1.125 1.125 0 00-1.091-.852H4.5A2.25 2.25 0 002.25 4.5v2.25z"/></svg>
+      (973) 489-4922
+    </a>
+  </div>
+</section>
+
+<footer>
+  <span>© 2026 Ethan Geronimo</span>
+  <span>Newark, NJ · Finance & Management · Rutgers</span>
+</footer>
+
+<script>
+  // Cursor
+  const cd = document.getElementById('cd'), cr = document.getElementById('cr');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+  function animCursor() {
+    cd.style.left = mx + 'px'; cd.style.top = my + 'px';
+    rx += (mx - rx) * .15; ry += (my - ry) * .15;
+    cr.style.left = rx + 'px'; cr.style.top = ry + 'px';
+    requestAnimationFrame(animCursor);
+  }
+  animCursor();
+
+  // Nav scroll
+  window.addEventListener('scroll', () => {
+    document.getElementById('nav').classList.toggle('scrolled', scrollY > 40);
+  });
+
+  // Reveal on scroll
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Accordion
+  function toggleExp(el) {
+    document.querySelectorAll('.exp-item.open').forEach(o => { if (o !== el) o.classList.remove('open'); });
+    el.classList.toggle('open');
+  }
+</script>
+</body>
+</html>
